@@ -1,0 +1,50 @@
+import unittest
+from collections import deque
+
+def are_connected(graph, city1, city2):
+    if city1 not in graph or city2 not in graph:
+        return False
+    visited = set()
+    queue = deque([city1])
+    while queue:
+        current = queue.popleft()
+        if current == city2:
+            return True
+        visited.add(current)
+        for neighbor in graph[current]:
+            if neighbor not in visited:
+                queue.append(neighbor)
+    return False
+
+class TestCityConnections(unittest.TestCase):
+
+    def setUp(self):
+        self.graph = {
+            "Bengaluru": {"Hyderabad", "Chennai", "Kochi"},
+            "Hyderabad": {"Bengaluru", "Nagpur", "Vijayawada"},
+            "Chennai": {"Bengaluru"},
+            "Nagpur": {"Hyderabad"},
+            "Vijayawada": {"Hyderabad"},
+            "Kochi": {"Bengaluru"}
+        }
+
+    def test_connected_bengaluru_hyderabad(self):
+        self.assertTrue(are_connected(self.graph, "Bengaluru", "Hyderabad"))
+
+    def test_connected_chennai_nagpur(self):
+        self.assertTrue(are_connected(self.graph, "Chennai", "Nagpur"))
+
+    def test_connected_kochi_vijayawada(self):
+        self.assertTrue(are_connected(self.graph, "Kochi", "Vijayawada"))
+
+    def test_not_connected_nagpur_kochi(self):
+        self.assertTrue(are_connected(self.graph, "Nagpur", "Kochi"))
+
+    def test_same_city(self):
+        self.assertTrue(are_connected(self.graph, "Hyderabad", "Hyderabad"))
+
+    def test_city_not_in_graph(self):
+        self.assertFalse(are_connected(self.graph, "Delhi", "Bengaluru"))
+
+if __name__ == "_main_":
+    unittest.main()
